@@ -29,7 +29,7 @@ func main() {
 
 	// Use query
 	query := gocb.NewN1qlQuery("SELECT * FROM default")
-	rows, _ := bucket.ExecuteN1qlQuery(query)
+	rows, _ := bucket.ExecuteN1qlQuery(query, nil)
 	var row interface{}
 	for rows.Next(&row) {
 		fmt.Printf("Row: %v", row)
