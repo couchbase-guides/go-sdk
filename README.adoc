@@ -4,9 +4,7 @@ tags: [go-sdk]
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: python-sdk
-
-NOTE: Work In Progress
+:project_id: go-sdk
 
 This guide explains how to use http://developer.couchbase.com/documentation/server/current/sdk/go/start-using-sdk.html[Couchbase Go SDK] to store and retrieve a JSON document in http://developer.couchbase.com/server[Couchbase].
 
@@ -26,11 +24,13 @@ Couchbase is an open source NoSQL document database. It can be programmed using 
 
 Install and start Couchbase for your operating system as explained at: http://developer.couchbase.com/documentation/server/current/getting-started/installing.html. A default bucket by the name `default` is created for you.
 
+Open up Couchbase Web Console at http://localhost:8091, go the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
+
 === Install Go Client SDK
 
 Couchbase Go Client SDK can be installed on different operating systems. Complete set of instructions are available at http://developer.couchbase.com/documentation/server/current/sdk/go/start-using-sdk.html. OSX specific instructions are given below.
 
-Install Go Client SDK on OSX requires to install Go language programming language distribution. This in turn requires to install XCode and the process could take a few minutes depending upon your connectivity. 
+Go Client SDK on OSX requires to install Go language programming language distribution. This in turn requires to install XCode and the process could take a few minutes depending upon your connectivity. 
 
 . Download and Install https://itunes.apple.com/au/app/xcode/id497799835?mt=12[XCode].
 . Install the XCode CLI tools as `xcode-select --install`.
@@ -74,19 +74,23 @@ func main() {
 
 	bucket.Upsert("u:book1",
 		Book{
-			ISBN: "978-1-4919-1889-0",
-			Name: "Minecraft Modding with Forge",
-			Cost: "29.99",
+			isbn: "978-1-4919-1889-0",
+			name: "Minecraft Modding with Forge",
+			cost: "29.99",
 		}, 0)
 
 	// Get the value back
 	var inBook Book
 	bucket.Get("u:book1", &inBook)
-	fmt.Printf("User: %v\n", inBook)
+	fmt.Printf("Book: %v\n", inBook)
 
 	// Use query
 	query := gocb.NewN1qlQuery("SELECT * FROM default")
-	rows, _ := bucket.ExecuteN1qlQuery(query, nil)
+	rows, err := bucket.ExecuteN1qlQuery(query, nil)
+	if (err != nil) {
+		fmt.Printf(err.Error())
+		return;
+	}
 	var row interface{}
 	for rows.Next(&row) {
 		fmt.Printf("Row: %v", row)
@@ -94,13 +98,15 @@ func main() {
 }
 ----
 
-`Bucket` class creates a connection to the Couchbase node identified by `localhost`. It also opens up the `default` bucket.
+Couchbase Go library is used in this class.
 
-A JSON document is upserted in the bucket. The word `"upsert"` comes from `"update"` and `"insert"`. So this method will either insert the document if it does not exist, or update if it already exists. A fresh install of Couchbase has an empty `default` bucket. So the document will be inserted for the first run. Subsequent runs of this application will update the document.
+A new Go struct named `Book` is defined that mimics the JSON docuemnt structure. `Connect` method a connection to the Couchbase node identified by `localhost`. The `default` bucket is opened using the `OpenBucket` method.
+
+A JSON document is upserted in the bucket. The word `"Upsert"` comes from `"update"` and `"insert"`. So this method will either insert the document if it does not exist, or update if it already exists. A fresh install of Couchbase has an empty `default` bucket. So the document will be inserted for the first run. Subsequent runs of this application will update the document.
 
 A key is given to identify the document, this is `book1` in our case. The document itself is the JSON fragment and is the second parameter of the method.
 
-The inserted document can be easily accessed using `bucket.get()` method and passing the key used during the creation. Value of the document can be retrieved using `.value`.
+The inserted document can be easily accessed using `bucket.Get()` method and passing the key used during the creation. Value of the document can be retrieved using `.value`.
 
 All documents from the bucket can be easily retrieved using http://couchbase.com/n1ql[N1QL] query as well.
 
@@ -121,18 +127,18 @@ This will compile the source code and generate the binary file.
 In the same directory, run the application by giving the command:
 
 ```
-go app
+app
 ```
 
 It will show the output as:
 
 [source, text]
 ----
-{u'cost': 29.99, u'isbn': u'978-1-4919-1889-0', u'name': u'Minecraft Modding with Forge'}
-{u'cost': 29.99, u'isbn': u'978-1-4919-1889-0', u'name': u'Minecraft Modding with Forge'}
+Book: {978-1-4919-1889-0 Minecraft Modding with Forge 29.99}
+Row: map[default:map[name:Minecraft Modding with Forge cost:29.99 isbn:978-1-4919-1889-0]]
 ----
 
-The first result comes from `print(bucket.get("book1").value)` method. The second line comes from executing the N1QL query and iterating over all the documents.
+The first result comes from `bucket.Get("u:book1", &inBook)` method. The second line comes from executing the N1QL query and iterating over all the documents.
 
 == Summary
 

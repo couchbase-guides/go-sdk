@@ -25,11 +25,15 @@ func main() {
 	// Get the value back
 	var inBook Book
 	bucket.Get("u:book1", &inBook)
-	fmt.Printf("User: %v\n", inBook)
+	fmt.Printf("Book: %v\n", inBook)
 
 	// Use query
 	query := gocb.NewN1qlQuery("SELECT * FROM default")
-	rows, _ := bucket.ExecuteN1qlQuery(query, nil)
+	rows, err := bucket.ExecuteN1qlQuery(query, nil)
+	if (err != nil) {
+		fmt.Printf(err.Error())
+		return;
+	}
 	var row interface{}
 	for rows.Next(&row) {
 		fmt.Printf("Row: %v", row)
