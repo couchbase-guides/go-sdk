@@ -22,9 +22,9 @@ Couchbase is an open source NoSQL document database. It can be programmed using 
 
 === Install and Start Couchbase
 
-Install and start Couchbase for your operating system as explained at: http://developer.couchbase.com/documentation/server/current/getting-started/installing.html. A default bucket by the name `default` is created for you.
+Install and start Couchbase for your operating system as explained at: http://developer.couchbase.com/documentation/server/current/getting-started/installing.html. A default bucket by the name `default` is created.
 
-Open up Couchbase Web Console at http://localhost:8091, go the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
+Open up Couchbase Web Console at http://localhost:8091, go to the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
 
 === Install Go Client SDK
 
@@ -38,6 +38,7 @@ Go Client SDK on OSX requires to install Go language programming language distri
 +
 The installer adds `/usr/local/go/bin` directory in your `PATH` environment variable. You may need to restart any open Terminal sessions for the change to take effect.
 +
+. Create a directory `Go` in your home directory and set `GOPATH` to that directory.
 . Now you are ready to install Couchbase Go SDK:
 +
 
@@ -45,7 +46,7 @@ The installer adds `/usr/local/go/bin` directory in your `PATH` environment vari
 go get gopkg.in/couchbase/gocb.v1
 ```
 +
-This will first install the `libcouchbase` library, then Python interpreter, and finally the Couchbase Python library.
+This will install the Couchbase Go packages.
 
 == Code
 
@@ -98,15 +99,15 @@ func main() {
 }
 ----
 
-Couchbase Go library is used in this class.
+Couchbase Go library, defined by `gopkg.in/couchbase/gocb.v1` is used in this class.
 
-A new Go struct named `Book` is defined that mimics the JSON docuemnt structure. `Connect` method a connection to the Couchbase node identified by `localhost`. The `default` bucket is opened using the `OpenBucket` method.
+A new Go struct named `Book` is defined that mimics the JSON document structure. `Connect` method creates a connection to the Couchbase node identified by `localhost`. The `default` bucket is opened using the `OpenBucket` method.
 
 A JSON document is upserted in the bucket. The word `"Upsert"` comes from `"update"` and `"insert"`. So this method will either insert the document if it does not exist, or update if it already exists. A fresh install of Couchbase has an empty `default` bucket. So the document will be inserted for the first run. Subsequent runs of this application will update the document.
 
-A key is given to identify the document, this is `book1` in our case. The document itself is the JSON fragment and is the second parameter of the method.
+A key is given to identify the document, this is `book1` in our case. The document itself is the JSON fragment and is second parameter of the method.
 
-The inserted document can be easily accessed using `bucket.Get()` method and passing the key used during the creation. Value of the document can be retrieved using `.value`.
+The inserted document can be easily accessed using `bucket.Get()` method by passing the key used during the creation. Value of the document can be retrieved using `.value`.
 
 All documents from the bucket can be easily retrieved using http://couchbase.com/n1ql[N1QL] query as well.
 
