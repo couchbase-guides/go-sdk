@@ -24,7 +24,11 @@ Couchbase is an open source NoSQL document database. It can be programmed using 
 
 Install and start Couchbase for your operating system as explained at: http://developer.couchbase.com/documentation/server/current/getting-started/installing.html. A default bucket by the name `default` is created.
 
-Open Couchbase Web Console at http://localhost:8091, go to the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
+Open Couchbase Web Console at http://localhost:8091, go to the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on `Execute` button to create the index.
+
+image::couchbase-default-bucket-create-index.png[]
+
+Status shows that the index was successfully created.
 
 === Install Go Client SDK
 
