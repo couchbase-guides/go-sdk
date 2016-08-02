@@ -6,9 +6,9 @@ import (
 )
 
 type Book struct {
-	ISBN string `json:"isbn"`
-	Name string `json:"name"`
-	Cost string `json:"cost"`
+	isbn string `json:"isbn"`
+	name string `json:"name"`
+	cost string `json:"cost"`
 }
 
 func main() {
@@ -17,9 +17,9 @@ func main() {
 
 	bucket.Upsert("u:book1",
 		Book{
-			ISBN: "978-1-4919-1889-0",
-			Name: "Minecraft Modding with Forge",
-			Cost: "29.99",
+			isbn: "978-1-4919-1889-0",
+			name: "Minecraft Modding with Forge",
+			cost: "29.99",
 		}, 0)
 
 	// Get the value back
@@ -39,3 +39,4 @@ func main() {
 		fmt.Printf("Row: %v", row)
 	}
 }
+

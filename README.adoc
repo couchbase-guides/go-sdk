@@ -6,7 +6,7 @@ tags: [go-sdk]
 :source-highlighter: prettify
 :project_id: go-sdk
 
-This guide explains how to use http://developer.couchbase.com/documentation/server/current/sdk/go/start-using-sdk.html[Couchbase Go SDK] to store and retrieve a JSON document in http://developer.couchbase.com/server[Couchbase].
+This guide explains how to use http://developer.couchbase.com/documentation/server/current/sdk/go/start-using-sdk.html[Couchbase Go SDK] to store and retrieve a JSON document in http://developer.couchbase.com/server[Couchbase Server].
 
 == What you'll build
 
@@ -24,24 +24,23 @@ Couchbase is an open source NoSQL document database. It can be programmed using 
 
 Install and start Couchbase for your operating system as explained at: http://developer.couchbase.com/documentation/server/current/getting-started/installing.html. A default bucket by the name `default` is created.
 
-Open up Couchbase Web Console at http://localhost:8091, go to the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
+Open Couchbase Web Console at http://localhost:8091, go to the Query tab, create a primary index using `CREATE PRIMARY INDEX on default` and click on Execute button to create the index.
 
 === Install Go Client SDK
 
 Couchbase Go Client SDK can be installed on different operating systems. Complete set of instructions are available at http://developer.couchbase.com/documentation/server/current/sdk/go/start-using-sdk.html. OSX specific instructions are given below.
 
-Go Client SDK on OSX requires to install Go language programming language distribution. This in turn requires to install XCode and the process could take a few minutes depending upon your connectivity. 
+Go Client SDK on OSX requires to install Go language programming language distribution. This in turn requires to install XCode and the process could take a few minutes depending upon your connectivity. If you already have XCode and Go installed, then you can skip the first few steps.
 
 . Download and Install https://itunes.apple.com/au/app/xcode/id497799835?mt=12[XCode].
 . Install the XCode CLI tools as `xcode-select --install`.
-. Download https://golang.org/dl/[Go package installer], open it and follow the prompts to install it. The package installs the Go distribution to `/usr/local/go` directory.
+. Download https://golang.org/dl/[Go package installer], open it and follow the prompts to install it. The package installs the Go distribution in the `/usr/local/go` directory.
 +
 The installer adds `/usr/local/go/bin` directory in your `PATH` environment variable. You may need to restart any open Terminal sessions for the change to take effect.
 +
 . Create a directory `Go` in your home directory and set `GOPATH` to that directory.
 . Now you are ready to install Couchbase Go SDK:
 +
-
 ```
 go get gopkg.in/couchbase/gocb.v1
 ```
@@ -64,9 +63,9 @@ import (
 )
 
 type Book struct {
-	ISBN string `json:"isbn"`
-	Name string `json:"name"`
-	Cost string `json:"cost"`
+	isbn string `json:"isbn"`
+	name string `json:"name"`
+	cost string `json:"cost"`
 }
 
 func main() {
@@ -99,17 +98,15 @@ func main() {
 }
 ----
 
-Couchbase Go library, defined by `gopkg.in/couchbase/gocb.v1` is used in this class.
+Couchbase Go library, defined by `gopkg.in/couchbase/gocb.v1` package, is used in this class.
 
-A new Go struct named `Book` is defined that mimics the JSON document structure. `Connect` method creates a connection to the Couchbase node identified by `localhost`. The `default` bucket is opened using the `OpenBucket` method.
+A new Go struct named `Book` is defined that mimics the JSON document structure. `Connect` method creates a connection to the Couchbase Server running on `localhost`. The `default` bucket is opened using the `OpenBucket` method. A fresh install of Couchbase has an empty `default` bucket.
 
-A JSON document is upserted in the bucket. The word `"Upsert"` comes from `"update"` and `"insert"`. So this method will either insert the document if it does not exist, or update if it already exists. A fresh install of Couchbase has an empty `default` bucket. So the document will be inserted for the first run. Subsequent runs of this application will update the document.
+`Upsert` method inserts or replaces a JSON document in the bucket. So the document will be inserted for the first run. Subsequent runs of this application will replace the document. In this method, a key `book1` is given to uniquely identify the document. The document itself is the JSON fragment and is the second parameter of the method.
 
-A key is given to identify the document, this is `book1` in our case. The document itself is the JSON fragment and is second parameter of the method.
+The inserted document can be easily accessed using `bucket.Get()` method by passing the key used during creation. A new http://couchbase.com/n1ql[N1QL] query is created to retrieve all documents from the database. The result is stored in `rows` and errors in `err` variable.
 
-The inserted document can be easily accessed using `bucket.Get()` method by passing the key used during the creation. Value of the document can be retrieved using `.value`.
-
-All documents from the bucket can be easily retrieved using http://couchbase.com/n1ql[N1QL] query as well.
+Any error messages are printed and the program is terminated. Finally, if there are no errors messages then all documents are looped using the `Next` method and printed.
 
 == Run
 
